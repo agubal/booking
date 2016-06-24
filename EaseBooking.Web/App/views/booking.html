@@ -1,0 +1,137 @@
+﻿<nav class="navbar navbar-default" ng-init="start()">
+    <div class="container-fluid">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" ng-click="start()" style="cursor: pointer">Andrey Gubal</a>
+        </div>
+    </div>
+</nav>
+
+<div class="row">
+    <div class="col-md-12">
+        <ol class="breadcrumb">
+            <li ng-class="{'active': page == pages.step1}">Step 1: Select product</li>
+            <li ng-class="{'active': page == pages.step2}">Step 2: Select available slot</li>
+            <li ng-class="{'active': page == pages.step3}">Step 3: Fill your data</li>
+            <li ng-class="{'active': page == pages.step4}">Step 4: Comfirmation</li>
+        </ol>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-12">
+        <div data-ng-hide="errorMessage == ''" class="alert alert-danger">
+            {{errorMessage}}
+        </div>
+    </div>
+</div>
+
+<div class="row" ng-if="progressBarIsShown">
+    <div class="col-md-12">
+        <div class="progress">
+            <div class="progress-bar progress-bar-success progress-bar-striped" role="progressbar" aria-valuenow="40" aria-valuemin="0" aria-valuemax="100" style="width: 100%">
+                <span class="sr-only">40% Complete (success)</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-12">
+        <h2>{{pageTitle}}</h2>
+    </div>
+</div>
+
+<div class="row" ng-if="page == pages.step1">
+    <div ng-repeat="product in products" class="col-xs-6 col-md-4" style="cursor: pointer" ng-click="selectProduct(product)">
+        <div class="panel panel-info">
+            <div class="panel-heading">{{product.Name}}</div>
+            <div class="panel-body">
+                {{product.Description}}
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row" ng-if="page == pages.step2">
+    <div ng-repeat="slot in product.TimeSlots" class="col-xs-6 col-md-3">
+
+        <div ng-if="slot.IsAvailable" class="panel panel-success" ng-click="selectSlot(slot)" style="cursor: pointer">
+            <div class="panel-heading">{{slot.StartDateTime | date: 'dd/MM/yyyy'}}</div>
+            <div class="panel-body">
+                {{slot.StartDateTime | date: 'HH:mm'}} - {{slot.EndDateTime | date: 'HH:mm'}}
+            </div>
+        </div>
+
+        <div ng-if="!slot.IsAvailable" class="panel panel-danger">
+            <div class="panel-heading">{{slot.StartDateTime | date: 'dd/MM/yyyy'}}</div>
+            <div class="panel-body">
+                {{slot.StartDateTime | date: 'HH:mm'}} - {{slot.EndDateTime | date: 'HH:mm'}}
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<div class="row" ng-if="page == pages.step3">
+    <div class="col-md-4">
+
+        <form class="form-login" role="form">
+            <label class="label label-default">Your name: </label>
+            <input type="text" class="form-control" placeholder="e.g. Novac Djocovic" data-ng-model="order.ClientName">
+
+            <label class="label label-default">Age: </label>
+            <input type="number" step="1" max="100" class="form-control" placeholder="Age" data-ng-model="order.Age">
+
+            <label class="label label-default">Weight: </label>
+            <input type="number" step="1" max="1000" class="form-control" placeholder="Weight" data-ng-model="order.Weight">
+
+            <label class="label label-default">Gender: </label>
+            <select class="form-control" ng-model="order.GenderId" ng-options="gender.Id as gender.Name for gender in genders"></select>
+
+            <label class="label label-default">Health problems: </label>
+            <select class="form-control" ng-change="addProblem(problem)" ng-model="problem" ng-options="problem as problem.Name for problem in healthProblems"></select>
+            <button class="btn btn-sm btn-default" ng-repeat="problem in order.HealthProblems" ng-click="removeProblem(problem)">
+                <span class="glyphicon glyphicon-minus" aria-hidden="true"></span>
+                {{problem.Name}}
+            </button>
+
+            <button class="btn btn-lg btn-success btn-block" type="submit" data-ng-click="book()">Book</button>
+        </form>
+    </div>
+</div>
+
+<div class="row" ng-if="page == pages.step4">
+    <div class="col-md-12">
+        <div class="alert alert-success" role="alert">Well done!!! Your booking is comfirmed</div>
+    </div>
+    <div>
+        <table class="table">
+            <tr>
+                <td>Product</td>
+                <td>{{product.Name}}</td>
+            </tr>
+            <tr>
+                <td>Time</td>
+                <td>{{order.TimeSlot.StartDateTime | date: 'dd/MM/yyyy HH:mm'}}</td>
+            </tr>
+            <tr>
+                <td>Name</td>
+                <td>{{order.ClientName}}</td>
+            </tr>
+            <tr>
+                <td>Age</td>
+                <td>{{order.Age}}</td>
+            </tr>
+            <tr>
+                <td>Weight</td>
+                <td>{{order.Weight}}</td>
+            </tr>
+        </table>
+    </div>
+</div>
